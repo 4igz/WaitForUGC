@@ -1,11 +1,16 @@
-import { Service, OnInit } from "@flamework/core";
+import { Service, OnInit, OnStart } from "@flamework/core";
 import Signal from "@rbxts/lemon-signal";
 import ProfileStore, { Profile } from "@rbxts/profile-store";
 import { Players } from "@rbxts/services";
 
 const profileTemplate = {
-	time: 0,
+	cash: 0,
 	subtractedTime: 0,
+	completedObbies: 0,
+
+	highestKillstreak: 0,
+	highestTimeAlive: 0,
+	kills: 0,
 
 	selfReports: 0,
 	isExploiter: false,
@@ -23,13 +28,18 @@ async function promisePlayerDisconnected(player: Player): Promise<void> {
 }
 
 @Service({})
-export class PlayerDataService implements OnInit {
-	private store = ProfileStore.New(`PlayerData`, profileTemplate);
+export class PlayerDataService implements OnInit, OnStart {
+	private store = ProfileStore.New(`PlayerDataV2`, profileTemplate);
 	private profiles = new Map<Player, Profile<typeof profileTemplate>>();
 	public profileLoaded = new Signal<(player: Player) => void>();
 	public profileSet = new Signal<(player: Player, newProfile: Profile<typeof profileTemplate>) => void>();
 
+	onStart() {
+		warn("Module start begin");
+	}
+
 	onInit() {
+		warn("Module init begin");
 		Players.PlayerAdded.Connect((player) => {
 			const profile = this.store.StartSessionAsync(`${player.UserId}`, {
 				Cancel: () => {

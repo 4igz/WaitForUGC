@@ -53,7 +53,12 @@ export class ZoneService implements OnStart {
 		const sword = ServerStorage.WaitForChild("Tools").WaitForChild("ClassicSword").Clone();
 		sword.Parent = character;
 
+		character.SetAttribute("InSwordfightingZone", true);
+
 		const humanoid = character.WaitForChild("Humanoid") as Humanoid;
+
+		humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Subject;
+		humanoid.NameDisplayDistance = 0;
 
 		this.connectedHumanoids.set(
 			humanoid,
@@ -74,6 +79,11 @@ export class ZoneService implements OnStart {
 		if (!character) return;
 		const humanoid = character.WaitForChild("Humanoid") as Humanoid;
 		humanoid.UnequipTools();
+
+		humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer;
+		humanoid.NameDisplayDistance = 100;
+
+		character.SetAttribute("InSwordfightingZone", false);
 
 		const backpack = player.WaitForChild("Backpack");
 		for (const tool of backpack.GetChildren()) {

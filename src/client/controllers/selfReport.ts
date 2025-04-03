@@ -28,7 +28,7 @@ const flyCheck = (character: Model) => {
 };
 
 const humanoidProps = {
-	WalkSpeed: 16,
+	WalkSpeed: 32,
 	JumpHeight: 7.2,
 	JumpPower: 50,
 };
@@ -107,7 +107,7 @@ task.spawn(() => {
 		Events.selfReport("GravityMod");
 	});
 
-	ScriptContext.Error.Connect((_message, stackTrace, source) => {
+	ScriptContext.Error.Connect((message, stackTrace, source) => {
 		// Attempt to parse the script name from stackTrace
 		const [i, j] = string.find(stackTrace, ", line");
 		if (i !== undefined && j !== undefined) {
@@ -122,7 +122,7 @@ task.spawn(() => {
 						warn("Error in Studio triggered a self-report");
 						return;
 					}
-					Events.selfReport("CustomScript");
+					Events.selfReport(`CustomScriptError: ${message}`);
 				}
 			}
 		}
